@@ -5,47 +5,63 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { MyContext } from "../MyContext";
+import { useInfiniteQuery } from "react-query";
 function CoinTableInfinite(){
     const navigate = useNavigate();
-    const [page, setpage] = useState(1);
+    const [hasMore, sethasMore] = useState(true);
     const [currentdata, updatecurrentdata] = useState([]);
-    const [datastate, updatedatastate] = useState(false);
     const [comparearray, updatecomparearray] = useState([]);
     const [compare, setcompare] = useState(false);
     const {currency} = useContext(MyContext);
     console.log(currency);
-    const {data , refetch} = useQuery(["page", page, currency],
-        ()=>fetchCoinData(page, currency),
-        {
-            cacheTime: 1000*60*2,
-            staleTime: 1000*60*2,
-            enabled: false,
-        }
-    ) 
-    useEffect(()=>{
-        console.log("fetchmore data called");
-        fetchmoredata()
-    },[])
-    useEffect(()=>{
-        updatnewdata();
-    },[data])
-    function updatnewdata() {
-            // Use functional update to ensure you have the latest state
-            if(data){
-                updatecurrentdata((prevData) => {
-                    const updatedData = structuredClone(prevData).concat(data);
-                    return updatedData;
-                });
-                setpage((prevPage) => prevPage + 1);
-                updatedatastate(true);
-            }
-    }
+    // const {data , refetch} = useQuery(["page", page, currency],
+    //     ()=>fetchCoinData(page, currency),
+    //     {
+    //         cacheTime: 1000*60*2,
+    //         staleTime: 1000*60*2,
+    //         enabled: false,
+    //         retry : 10,
+    //         retryDelay : 1000*60
+    //     }
+    // ) 
+    // useEffect(()=>{
+    //     console.log("fetchmore data called");
+    //     fetchmoredata()
+    // },[])
+    // useEffect(()=>{
+    //     updatnewdata();
+    // },[data])
+    // function updatnewdata() {
+    //         // Use functional update to ensure you have the latest state
+    //         if(data){
+    //             updatecurrentdata((prevData) => {
+    //                 const updatedData = structuredClone(prevData).concat(data);
+    //                 return updatedData;
+    //             });
+    //             setpage((prevPage) => prevPage + 1);
+    //             updatedatastate(true);
+    //         }
+    // }
     function handleredirect(coinId){
         navigate(`detail/${coinId}`)
     }
-    function fetchmoredata(){
-        refetch();
-    }
+    // function fetchmoredata(){
+    //     refetch();
+    // }
+    const {data : feed, fetchNextPage, hasNextPage, isFetchingNextPage, status} = useInfiniteQuery(["coinlist", currency], ({pageParam = 1})=> fetchCoinData(pageParam, currency), {
+        getNextPageParam : (lastpage, pages) => {if(lastpage.length > 0){return pages.length+1}else{return undefined}
+    }, cacheTime : 1000*60*60,
+    staleTime : 1000*60*30
+    })
+    useEffect(()=>{
+        console.log(status);
+        if(status === 'success'){ const allData = feed.pages.flat();
+            console.log(allData, "allData");
+        updatecurrentdata(allData);
+        console.log(feed, "feed");
+    if(feed.pages[feed.pages.length - 1].length === 0)
+        sethasMore(false)};
+    },[feed, status])
     return(
         <>
         {compare && <div className="flex flex-row max-h-fit justify-between mt-5">
@@ -95,9 +111,9 @@ function CoinTableInfinite(){
             <InfiniteScroll 
                 dataLength={currentdata.length}
                 next={
-                    fetchmoredata
+                    ()=>{fetchNextPage()}
                 }
-                hasMore={currentdata.length != 100}
+                hasMore={hasMore}
                 loader={<h4 className="text-2xl mx-auto font-mono font-bold">Loading...</h4>}
                 endMessage={
                     <p style={{ textAlign: 'center' }}>
@@ -105,7 +121,7 @@ function CoinTableInfinite(){
                     </p>
                   }
             >
-            {datastate && currentdata.map((coin)=>{
+            {status == "success" && currentdata.map((coin)=>{
                 return(
                     <div key={coin.id} onClick={()=>{handleredirect(coin.id)}} className="flex flex-row w-full bg-blue-400 rounded-xl h-20 items-center pl-2 my-3 hover:cursor-pointer hover:bg-blue-300">
                         <div className="flex flex-row items-center w-4/12">
