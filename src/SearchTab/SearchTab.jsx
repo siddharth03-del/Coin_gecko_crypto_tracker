@@ -1,5 +1,4 @@
 import { useState } from "react";
-import store from "../State/Store";
 function SearchTab({setword}){
     const [value, setvalue] = useState('');
     function handlechange(event){

@@ -1,7 +1,7 @@
 import { fetchCoinHistoricData } from "../Services/fetchCoinHistoricData";
 import { useQuery } from "react-query";
 import { useState } from "react";
-import store from "../State/Store";
+import store from "../State/store.js";
 export function useFetchCoinHistory(coinId){
     const currency = store((state)=> state.currency);
     const [days, setdays] = useState(7);

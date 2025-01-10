@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import {  Suspense } from "react";
 import MainLayout from "../pages/Layout";
 import Homepage from "../pages/Home";
 import CoinDetail from "../pages/CoinDetailPage";
