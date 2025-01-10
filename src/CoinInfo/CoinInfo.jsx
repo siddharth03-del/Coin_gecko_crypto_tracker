@@ -3,7 +3,7 @@ import { Chart } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 import { chartDays } from "../Helpers/constant";
 import { useEffect } from "react";
-import store from "../State/Store";
+import store from "../State/store.js";
 Chart.register(CategoryScale);
 function CoinInfo({data, days, setdays, setinterval}){
     const currency = store((state)=>state.currency);

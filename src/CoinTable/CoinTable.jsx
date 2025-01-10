@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchCoinData } from "../Services/fetchCoinData";
 import { getCoinList } from "../Hooks/usefetchCoinList";
 import { useEffect } from "react";
-import store from "../State/Store";
+import {store} from "../State/store.js"
 function CoinTable(){
     const currency = store((state)=>state.currency);
     const navigate = useNavigate();
