@@ -1,9 +1,8 @@
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Children, useContext, useState } from "react"
+import { useContext, useState } from "react"
 import { fetchCoinData } from "../Services/fetchCoinData";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
 import { MyContext } from "../MyContext";
 import { useInfiniteQuery } from "react-query";
 function CoinTableInfinite(){

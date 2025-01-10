@@ -8,8 +8,6 @@ import { getCoinList } from "../Hooks/usefetchCoinList";
 import { useState } from "react";
 import Suggestions from "../Suggestions/Suggestion";
 import Search from "../Search/Search";
-import store from "../State/Store";
-import { useStore } from "zustand";
 function CoinDetail({word, setword, suggestion, updatesuggestion}){
     const [searching, updatesearching] = useState(false);
     useEffect(()=>{
